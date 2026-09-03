@@ -1,1 +1,5 @@
-export { default as UserDashboard } from '../../components/UserDashboard'
+export { default as UserDashboard } from './components/UserDashboard'
+export { createDashboardRoute } from './routes'
+export { default as OrdersPage } from './pages/OrdersPage'
+export { default as SettingsPage } from './pages/SettingsPage'
+export type { DashboardMenuItem } from './types'

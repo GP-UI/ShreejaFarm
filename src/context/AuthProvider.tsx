@@ -1,9 +1,10 @@
 import { useState, type ReactNode } from 'react'
 import { AuthContext } from './AuthContext'
-import type { CreateProfileInput, UserProfile } from '../types/profile'
+import type { CreateProfileInput, UserProfile } from '../features/profile/types'
 import { fileToBase64 } from '../services/fileService'
 import { clearStoredProfile, getStoredProfile, saveProfile } from '../services/authStorage'
-import { createProfile as createProfileRequest, login as loginRequest, profileFromLoginResponse } from '../services/userService'
+import { login as loginRequest, profileFromLoginResponse } from '../features/auth/services/authService'
+import { createProfile as createProfileRequest } from '../features/profile/services/profileService'
 
 type AuthProviderProps = {
   children: ReactNode

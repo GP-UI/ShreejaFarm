@@ -1,4 +1,4 @@
-import type { UserProfile } from '../types/profile'
+import type { UserProfile } from '../types'
 
 type ProfileOverviewProps = {
   profile: UserProfile

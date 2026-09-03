@@ -1,5 +1,5 @@
 import { createContext, use } from 'react'
-import type { CreateProfileInput, UserProfile } from '../types/profile'
+import type { CreateProfileInput, UserProfile } from '../features/profile/types'
 
 type AuthContextValue = {
   profile: UserProfile | null

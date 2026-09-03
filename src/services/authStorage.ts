@@ -1,4 +1,4 @@
-import type { UserProfile } from '../types/profile'
+import type { UserProfile } from '../features/profile/types'
 
 const PROFILE_STORAGE_KEY = 'shreeja_farm_profile'
 

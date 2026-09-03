@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import { useNotification } from '../components/notificationContext'
-import type { CreateProfileInput } from '../types/profile'
+import type { CreateProfileInput } from '../features/profile/types'
 import { useAuth } from '../context/AuthContext'
 import AppRoutes from '../routes'
 

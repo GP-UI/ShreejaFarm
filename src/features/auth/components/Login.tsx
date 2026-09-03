@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import FormField from './FormField'
+import FormField from '../../../components/FormField'
 
 type LoginProps = {
   onLogin: (userId: string, password: string, signal?: AbortSignal) => Promise<void>

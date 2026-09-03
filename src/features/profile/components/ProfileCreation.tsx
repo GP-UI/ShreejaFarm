@@ -1,10 +1,10 @@
 import type { FormEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import FormField from './FormField'
-import type { CreateProfileInput } from '../types/profile'
+import FormField from '../../../components/FormField'
+import type { CreateProfileInput } from '../types'
 
-export type { CreateProfileInput } from '../types/profile'
+export type { CreateProfileInput } from '../types'
 
 type ProfileCreationProps = {
   onCreated: (profile: CreateProfileInput, signal?: AbortSignal) => Promise<void>

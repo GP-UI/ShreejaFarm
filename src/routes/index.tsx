@@ -1,13 +1,12 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import RouteLoading from '../components/RouteLoading'
-import type { CreateProfileInput, UserProfile } from '../types/profile'
+import { createDashboardRoute } from '../features/dashboard/routes'
+import type { CreateProfileInput, UserProfile } from '../features/profile/types'
 import { ROUTE_PATHS } from './paths'
 
-const Login = lazy(() => import('../components/Login'))
-const ProfileCreation = lazy(() => import('../components/ProfileCreation'))
-const ProfileOverview = lazy(() => import('../components/ProfileOverview'))
-const UserDashboard = lazy(() => import('../components/UserDashboard'))
+const Login = lazy(() => import('../features/auth/components/Login'))
+const ProfileCreation = lazy(() => import('../features/profile/components/ProfileCreation'))
 
 type AppRoutesProps = {
   profile: UserProfile | null
@@ -31,15 +30,7 @@ function AppRoutes({ profile, onProfileCreation, onLogin, isAuthenticated }: App
           path={ROUTE_PATHS.profileCreate}
           element={<ProfileCreation onCreated={onProfileCreation} />}
         />
-        <Route
-          path={ROUTE_PATHS.dashboard}
-          element={isAuthenticated ? <UserDashboard profile={profile} /> : <Navigate to={entryPath} replace />}
-        >
-          <Route index element={<Navigate to="profile" replace />} />
-          <Route path="profile" element={profile ? <ProfileOverview profile={profile} /> : <h2 className="text-2xl font-semibold text-stone-950">Your dashboard</h2>} />
-          <Route path="orders" element={<h2 className="text-2xl font-semibold text-stone-950">My orders</h2>} />
-          <Route path="settings" element={<h2 className="text-2xl font-semibold text-stone-950">Settings</h2>} />
-        </Route>
+        {createDashboardRoute({ profile, isAuthenticated })}
         <Route path="*" element={<Navigate to={entryPath} replace />} />
       </Routes>
     </Suspense>

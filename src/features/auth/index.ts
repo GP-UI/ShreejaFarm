@@ -1,3 +1,5 @@
-export { default as Login } from '../../components/Login'
+export { default as Login } from './components/Login'
 export { AuthProvider } from '../../context/AuthProvider'
 export { useAuth } from '../../context/AuthContext'
+export { login, profileFromLoginResponse } from './services/authService'
+export type { LoginResponse } from './types'
