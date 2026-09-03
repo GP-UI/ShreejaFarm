@@ -1,18 +1,21 @@
 import type { FormEvent } from 'react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import FormField from './FormField'
-import type { Profile } from '../types/profile'
+import type { CreateProfileInput } from '../types/profile'
 
-export type { Profile } from '../types/profile'
+export type { CreateProfileInput } from '../types/profile'
 
 type ProfileCreationProps = {
-  onCreated: (profile: Profile) => Promise<void>
+  onCreated: (profile: CreateProfileInput, signal?: AbortSignal) => Promise<void>
 }
 
 function ProfileCreation({ onCreated }: ProfileCreationProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const requestController = useRef<AbortController | null>(null)
+
+  useEffect(() => () => requestController.current?.abort(), [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -21,6 +24,8 @@ function ProfileCreation({ onCreated }: ProfileCreationProps) {
 
     setErrorMessage('')
     setIsSubmitting(true)
+    requestController.current?.abort()
+    requestController.current = new AbortController()
 
     try {
       await onCreated({
@@ -33,9 +38,11 @@ function ProfileCreation({ onCreated }: ProfileCreationProps) {
         city: String(formData.get('city')),
         email: String(formData.get('email')),
         photo: photo instanceof File ? photo : null,
-      })
+      }, requestController.current.signal)
     } catch {
-      setErrorMessage('We could not create your profile. Please try again.')
+      if (!requestController.current.signal.aborted) {
+        setErrorMessage('We could not create your profile. Please try again.')
+      }
     } finally {
       setIsSubmitting(false)
     }

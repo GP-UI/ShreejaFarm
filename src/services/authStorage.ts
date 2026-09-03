@@ -1,36 +1,32 @@
-import type { Profile } from '../types/profile'
+import type { UserProfile } from '../types/profile'
 
 const PROFILE_STORAGE_KEY = 'shreeja_farm_profile'
 
-type StoredProfile = Omit<Profile, 'password' | 'photo'> & {
-  photo: string | null
+type StoredProfile = UserProfile
+
+export function saveProfile(profile: UserProfile) {
+  localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile))
 }
 
-export function saveProfile(profile: Profile) {
-  const storedProfile: StoredProfile = {
-    userId: profile.userId,
-    firstName: profile.firstName,
-    lastName: profile.lastName,
-    mobileNumber: profile.mobileNumber,
-    gender: profile.gender,
-    city: profile.city,
-    email: profile.email,
-    photo: typeof profile.photo === 'string' ? profile.photo : null,
-  }
-
-  localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(storedProfile))
+function isStoredProfile(value: unknown): value is StoredProfile {
+  if (!value || typeof value !== 'object') return false
+  const profile = value as Record<string, unknown>
+  return ['userId', 'firstName', 'lastName', 'mobileNumber', 'gender', 'city', 'email'].every(
+    (key) => typeof profile[key] === 'string',
+  ) && (typeof profile.photo === 'string' || profile.photo === null)
 }
 
-export function getStoredProfile(): Profile | null {
+export function getStoredProfile(): UserProfile | null {
   const storedProfile = localStorage.getItem(PROFILE_STORAGE_KEY)
   if (!storedProfile) return null
 
   try {
-    const profile = JSON.parse(storedProfile) as StoredProfile
-    return {
-      ...profile,
-      password: '',
+    const profile: unknown = JSON.parse(storedProfile)
+    if (!isStoredProfile(profile)) {
+      localStorage.removeItem(PROFILE_STORAGE_KEY)
+      return null
     }
+    return profile
   } catch {
     localStorage.removeItem(PROFILE_STORAGE_KEY)
     return null

@@ -1,4 +1,15 @@
-export type Profile = {
+export type UserProfile = {
+  userId: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  city: string
+  email: string
+  photo: string | null
+}
+
+export type CreateProfileInput = {
   userId: string
   password: string
   firstName: string
@@ -7,7 +18,7 @@ export type Profile = {
   gender: string
   city: string
   email: string
-  photo: File | string | null
+  photo: File | null
 }
 
 export type LoginResponse = {
@@ -24,4 +35,9 @@ export type LoginResponse = {
     email: string
     userPhoto?: string | null
   }
+}
+
+export type CreateProfileResponse = {
+  success: boolean
+  message?: string
 }

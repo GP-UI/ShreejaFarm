@@ -17,7 +17,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, [notification])
 
   return (
-    <NotificationContext.Provider value={{ notify }}>
+    <NotificationContext value={{ notify }}>
       {children}
       {notification && (
         <div className="fixed right-5 top-24 z-[60] w-[min(22rem,calc(100vw-2.5rem))]" role="status" aria-live="polite">
@@ -26,6 +26,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           </div>
         </div>
       )}
-    </NotificationContext.Provider>
+    </NotificationContext>
   )
 }

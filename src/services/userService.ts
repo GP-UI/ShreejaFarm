@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { LoginResponse, Profile } from '../types/profile'
+import type { CreateProfileInput, CreateProfileResponse, LoginResponse, UserProfile } from '../types/profile'
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api'
 
 export const apiClient = axios.create({
@@ -24,12 +24,9 @@ function getApiErrorMessage(error: unknown, fallbackMessage: string) {
   return fallbackMessage
 }
 
-export async function login(userId: string, password: string) {
+export async function login(userId: string, password: string, signal?: AbortSignal) {
   try {
-    const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.login, {
-      userId,
-      password,
-    })
+    const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.login, { userId, password }, { signal })
 
     if (!response.data.success || !response.data.user) {
       throw new Error(response.data.message || 'Login failed.')
@@ -41,10 +38,9 @@ export async function login(userId: string, password: string) {
   }
 }
 
-export function profileFromLoginResponse(loginResponse: LoginResponse): Profile {
+export function profileFromLoginResponse(loginResponse: LoginResponse): UserProfile {
   return {
     userId: loginResponse.user.userId,
-    password: '',
     firstName: loginResponse.user.firstName,
     lastName: loginResponse.user.lastName,
     mobileNumber: loginResponse.user.mobileNumber,
@@ -55,9 +51,9 @@ export function profileFromLoginResponse(loginResponse: LoginResponse): Profile 
   }
 }
 
-export async function createProfile(profile: Profile, photoBase64: string | null) {
+export async function createProfile(profile: CreateProfileInput, photoBase64: string | null, signal?: AbortSignal) {
   try {
-    const response = await apiClient.post(API_ENDPOINTS.createProfile, {
+    const response = await apiClient.post<CreateProfileResponse>(API_ENDPOINTS.createProfile, {
       userId: profile.userId,
       password: profile.password,
       firstName: profile.firstName,
@@ -67,7 +63,11 @@ export async function createProfile(profile: Profile, photoBase64: string | null
       city: profile.city,
       email: profile.email,
       userPhoto: photoBase64,
-    })
+    }, { signal })
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Profile creation failed.')
+    }
 
     return response.data
   } catch (error) {

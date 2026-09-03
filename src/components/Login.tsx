@@ -1,15 +1,18 @@
 import type { FormEvent } from 'react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import FormField from './FormField'
 
 type LoginProps = {
-  onLogin: (userId: string, password: string) => Promise<void>
+  onLogin: (userId: string, password: string, signal?: AbortSignal) => Promise<void>
 }
 
 function Login({ onLogin }: LoginProps) {
   const [errorMessage, setErrorMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const requestController = useRef<AbortController | null>(null)
+
+  useEffect(() => () => requestController.current?.abort(), [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -24,11 +27,15 @@ function Login({ onLogin }: LoginProps) {
 
     setErrorMessage('')
     setIsSubmitting(true)
+    requestController.current?.abort()
+    requestController.current = new AbortController()
 
     try {
-      await onLogin(userId, password)
+      await onLogin(userId, password, requestController.current.signal)
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Invalid User ID or Password. Please try again.')
+      if (!requestController.current.signal.aborted) {
+        setErrorMessage(error instanceof Error ? error.message : 'Invalid User ID or Password. Please try again.')
+      }
     } finally {
       setIsSubmitting(false)
     }

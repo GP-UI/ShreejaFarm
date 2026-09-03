@@ -1,16 +1,10 @@
-import type { Profile } from '../types/profile'
+import type { UserProfile } from '../types/profile'
 
 type ProfileOverviewProps = {
-  profile: Profile
+  profile: UserProfile
 }
 
 function ProfileOverview({ profile }: ProfileOverviewProps) {
-  const photoUrl = typeof profile.photo === 'string'
-    ? profile.photo
-    : profile.photo
-      ? URL.createObjectURL(profile.photo)
-      : null
-
   return (
     <div>
       <div className="mb-6">
@@ -19,8 +13,8 @@ function ProfileOverview({ profile }: ProfileOverviewProps) {
       </div>
 
       <div className="grid gap-6 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:grid-cols-[auto_1fr] sm:p-8">
-        {photoUrl ? (
-          <img src={photoUrl} alt={`${profile.firstName} ${profile.lastName}`} className="size-24 rounded-full object-cover ring-4 ring-emerald-50" />
+        {profile.photo ? (
+          <img src={profile.photo} alt={`${profile.firstName} ${profile.lastName}`} className="size-24 rounded-full object-cover ring-4 ring-emerald-50" />
         ) : (
           <div className="flex size-24 items-center justify-center rounded-full bg-emerald-100 text-2xl font-semibold text-emerald-800">
             {profile.firstName.charAt(0)}{profile.lastName.charAt(0)}

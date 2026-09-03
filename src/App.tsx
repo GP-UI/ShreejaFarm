@@ -1,51 +1,33 @@
-import { useState } from 'react'
 import { BrowserRouter, useNavigate } from 'react-router-dom'
 import Footer from './components/Footer'
 import Header from './components/Header'
+import ErrorBoundary from './components/ErrorBoundary'
 import { NotificationProvider } from './components/NotificationProvider'
 import { useNotification } from './components/notificationContext'
-import type { Profile } from './types/profile'
-import { createProfile, login, profileFromLoginResponse } from './services/userService'
-import { fileToBase64 } from './services/fileService'
-import { clearStoredProfile, getStoredProfile, saveProfile } from './services/authStorage'
+import { AuthProvider } from './context/AuthProvider'
+import { useAuth } from './context/AuthContext'
+import type { CreateProfileInput } from './types/profile'
 import AppRoutes from './routes'
 
 function AppShell() {
-  const [profile, setProfile] = useState<Profile | null>(() => getStoredProfile())
-  const [isAuthenticated, setIsAuthenticated] = useState(() => getStoredProfile() !== null)
+  const { profile, isAuthenticated, login, createProfile, logout } = useAuth()
   const navigate = useNavigate()
   const { notify } = useNotification()
 
-  const handleProfileCreation = async (createdProfile: Profile) => {
-    const photoBase64 = createdProfile.photo instanceof File
-      ? await fileToBase64(createdProfile.photo)
-      : createdProfile.photo
-
-    await createProfile(createdProfile, photoBase64)
-
-    const savedProfile = { ...createdProfile, password: '', photo: photoBase64 }
-    saveProfile(savedProfile)
-    setProfile(savedProfile)
-    setIsAuthenticated(true)
+  const handleProfileCreation = async (createdProfile: CreateProfileInput, signal?: AbortSignal) => {
+    await createProfile(createdProfile, signal)
     notify({ type: 'success', message: 'Profile created successfully.' })
     navigate('/dashboard')
   }
 
-  const handleLogin = async (userId: string, password: string) => {
-    const loginResult = await login(userId, password)
-
-    const loggedInProfile = profileFromLoginResponse(loginResult)
-    setProfile(loggedInProfile)
-    saveProfile(loggedInProfile)
-    setIsAuthenticated(true)
-    notify({ type: 'success', message: loginResult.message || 'Login successful.' })
+  const handleLogin = async (userId: string, password: string, signal?: AbortSignal) => {
+    const message = await login(userId, password, signal)
+    notify({ type: 'success', message })
     navigate('/dashboard')
   }
 
   const handleLogout = () => {
-    clearStoredProfile()
-    setProfile(null)
-    setIsAuthenticated(false)
+    logout()
     notify({ type: 'success', message: 'You have been logged out.' })
     navigate('/login')
   }
@@ -77,7 +59,11 @@ function App() {
   return (
     <BrowserRouter>
       <NotificationProvider>
-        <AppShell />
+        <ErrorBoundary>
+          <AuthProvider>
+            <AppShell />
+          </AuthProvider>
+        </ErrorBoundary>
       </NotificationProvider>
     </BrowserRouter>
   )

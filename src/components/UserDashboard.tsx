@@ -1,8 +1,8 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import type { Profile } from '../types/profile'
+import type { UserProfile } from '../types/profile'
 
 type UserDashboardProps = {
-  profile: Profile | null
+  profile: UserProfile | null
 }
 
 function UserDashboard({ profile }: UserDashboardProps) {

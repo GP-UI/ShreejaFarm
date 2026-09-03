@@ -1,4 +1,37 @@
-# React + TypeScript + Vite
+# Shreeja Farm
+
+## Architecture
+
+The application is organized around small responsibilities:
+
+- `src/components`: reusable presentational components and page components.
+- `src/context`: application state providers such as authentication.
+- `src/config`: environment-driven configuration and API endpoints.
+- `src/routes`: route definitions and route paths. Route pages are lazy-loaded.
+- `src/services`: API, browser storage, and file processing services.
+- `src/types`: shared domain and API types.
+
+For a new feature, create a focused folder under `src/features/<feature-name>` when it owns multiple components, services, or routes. Keep truly reusable UI in `src/components` and shared domain types in `src/types`.
+
+Copy `.env.example` to `.env` to configure the backend URL:
+
+```text
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Validation
+
+```bash
+npm run build
+npm run lint
+```
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

@@ -1,17 +1,11 @@
 type HeaderProps = {
   hasProfile: boolean
-  profilePhoto: File | string | null
+  profilePhoto: string | null
   onProfileClick: () => void
   onLogout: () => void
 }
 
 function Header({ hasProfile, profilePhoto, onProfileClick, onLogout }: HeaderProps) {
-  const photoUrl = typeof profilePhoto === 'string'
-    ? profilePhoto
-    : profilePhoto
-      ? URL.createObjectURL(profilePhoto)
-      : null
-
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-stone-200 bg-white">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8">
@@ -33,8 +27,8 @@ function Header({ hasProfile, profilePhoto, onProfileClick, onLogout }: HeaderPr
             className="flex size-10 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-stone-600 transition hover:border-emerald-600 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
             aria-label={hasProfile ? 'Edit user profile' : 'Create user profile'}
           >
-            {photoUrl ? (
-              <img src={photoUrl} alt="User profile" className="size-10 rounded-full object-cover" />
+            {profilePhoto ? (
+              <img src={profilePhoto} alt="User profile" className="size-10 rounded-full object-cover" />
             ) : (
               <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <circle cx="12" cy="8" r="3.25" />
